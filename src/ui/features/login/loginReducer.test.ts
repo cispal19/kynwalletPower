@@ -1,4 +1,9 @@
-import { initialLoginState, loginReducer, type LoginState } from './loginReducer';
+import {
+  createInitialLoginState,
+  initialLoginState,
+  loginReducer,
+  type LoginState,
+} from './loginReducer';
 
 const filled: LoginState = {
   ...initialLoginState,
@@ -103,5 +108,41 @@ describe('loginReducer', () => {
     const noticed = loginReducer(filled, { type: 'showNotice', message: 'Aviso' });
     expect(noticed.notice).toBe('Aviso');
     expect(loginReducer(noticed, { type: 'submit' }).notice).toBeNull();
+  });
+});
+
+describe('loginReducer · aviso de registro completado (002 R3)', () => {
+  it('initialLoginState no tiene aviso de éxito', () => {
+    expect(initialLoginState.successNotice).toBeNull();
+  });
+
+  it('US1-3: createInitialLoginState recibe el aviso de éxito', () => {
+    expect(createInitialLoginState('texto').successNotice).toBe('texto');
+    expect(createInitialLoginState().successNotice).toBeNull();
+  });
+
+  it('FR-013: change oculta el aviso de éxito', () => {
+    const next = loginReducer(createInitialLoginState('texto'), {
+      type: 'change',
+      field: 'email',
+      value: 'a',
+    });
+    expect(next.successNotice).toBeNull();
+  });
+
+  it('change no borra el aviso "Función no disponible…"', () => {
+    const noticed = loginReducer(initialLoginState, { type: 'showNotice', message: 'Aviso' });
+    expect(loginReducer(noticed, { type: 'change', field: 'email', value: 'a' }).notice).toBe(
+      'Aviso',
+    );
+  });
+
+  it('logout no muestra el aviso de éxito', () => {
+    const welcome: LoginState = {
+      ...createInitialLoginState('texto'),
+      status: 'welcome',
+      welcomeName: 'Ana',
+    };
+    expect(loginReducer(welcome, { type: 'logout' }).successNotice).toBeNull();
   });
 });

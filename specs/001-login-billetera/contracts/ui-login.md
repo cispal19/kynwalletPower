@@ -16,7 +16,7 @@ Textos exactos en español, tal como figuran en el diseño de Figma (nodo `2:2`)
 | Enviar | `button` "Iniciar sesión" | En carga: `aria-busy=true`, deshabilitado, texto "Iniciando sesión…" |
 | Separador | texto "o continúa con" | Decorativo |
 | Google / Apple | `button` "Google", `button` "Apple" | Muestran el aviso |
-| Registro | `button` "Regístrate" precedido por "¿No tienes cuenta?" | Muestra el aviso |
+| Registro | `link` "Regístrate" precedido por "¿No tienes cuenta?" | `href="/registro"`; navega sin recargar (enmendado por 002 FR-021; antes mostraba el aviso) |
 
 **Errores por campo**: texto bajo el campo, vinculado con `aria-describedby`; el campo lleva
 `aria-invalid=true`.
@@ -44,5 +44,5 @@ Logo "KynWallet", titular "Tu dinero, sin fronteras.", texto de apoyo y la tarje
 ## Teclado
 
 Orden de tabulación: correo → contraseña → visibilidad → recordarme → recuperar contraseña →
-iniciar sesión → Google → Apple → regístrate. Enter en cualquier campo envía el formulario.
+iniciar sesión → Google → Apple → regístrate (enlace desde 002 FR-021). Enter en cualquier campo envía el formulario.
 El foco siempre es visible (anillo de 2px con contraste ≥ 3:1).

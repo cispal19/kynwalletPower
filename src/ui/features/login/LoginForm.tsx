@@ -8,19 +8,31 @@ import { Divider } from '@/ui/components/Divider/Divider';
 import { PasswordField } from '@/ui/components/PasswordField/PasswordField';
 import { SocialButton } from '@/ui/components/SocialButton/SocialButton';
 import { TextField } from '@/ui/components/TextField/TextField';
+import { Link } from '@/ui/navigation/Link';
+import { ROUTES } from '@/ui/navigation/routes';
 import { useLoginForm } from './useLoginForm';
 import { WelcomeView } from './WelcomeView';
 import styles from './LoginForm.module.css';
 
 type LoginFormProps = {
   authenticate: Authenticate;
+  /** Aviso que se muestra al llegar, p. ej. tras un registro (002 R3). */
+  initialNotice?: string;
 };
 
-export function LoginForm({ authenticate }: LoginFormProps) {
-  const { state, change, blur, submit, logout, toggleRemember, showNotice } =
-    useLoginForm(authenticate);
+export function LoginForm({ authenticate, initialNotice }: LoginFormProps) {
+  const { state, change, blur, submit, logout, toggleRemember, showNotice } = useLoginForm(
+    authenticate,
+    initialNotice,
+  );
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const successNoticeRef = useRef<HTMLDivElement>(null);
+
+  // 002 US1-3: el foco va al aviso de registro completado para garantizar su lectura.
+  useEffect(() => {
+    successNoticeRef.current?.focus();
+  }, []);
 
   // US2-4: tras credenciales incorrectas, el foco vuelve a la contraseña.
   useEffect(() => {
@@ -44,6 +56,12 @@ export function LoginForm({ authenticate }: LoginFormProps) {
 
   return (
     <form className={styles.form} noValidate onSubmit={handleSubmit}>
+      {state.successNotice && (
+        <Alert tone="info" ref={successNoticeRef} tabIndex={-1}>
+          {state.successNotice}
+        </Alert>
+      )}
+
       <div className={styles.heading}>
         <h1 className={styles.title}>Bienvenido de nuevo</h1>
         <p className={styles.subtitle}>Ingresa a tu cuenta para continuar</p>
@@ -108,9 +126,7 @@ export function LoginForm({ authenticate }: LoginFormProps) {
 
       <p className={styles.footer}>
         ¿No tienes cuenta?
-        <Button variant="link" onClick={notAvailable}>
-          Regístrate
-        </Button>
+        <Link href={ROUTES.register}>Regístrate</Link>
       </p>
     </form>
   );

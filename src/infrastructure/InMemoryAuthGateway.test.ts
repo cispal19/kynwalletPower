@@ -1,4 +1,5 @@
 import { TEST_ACCOUNT } from '@/test/fixtures';
+import { InMemoryAccountStore } from './InMemoryAccountStore';
 import { InMemoryAuthGateway } from './InMemoryAuthGateway';
 
 const gateway = (accounts = [TEST_ACCOUNT]) => new InMemoryAuthGateway(accounts, { delayMs: 0 });
@@ -78,5 +79,56 @@ describe('InMemoryAuthGateway (contracts/auth-gateway.md)', () => {
     expect(onResolve).not.toHaveBeenCalled();
     await vi.advanceTimersByTimeAsync(1);
     expect(onResolve).toHaveBeenCalledOnce();
+  });
+});
+
+describe('InMemoryAuthGateway · cuentas registradas (002 FR-014)', () => {
+  const registeredAccount = {
+    email: 'ana@example.test',
+    password: 'Clave-segura-1',
+    displayName: 'Ana Pérez',
+  };
+
+  function withRegistered(accounts: (typeof TEST_ACCOUNT)[] | null = [TEST_ACCOUNT]) {
+    const registered = new InMemoryAccountStore();
+    registered.add(registeredAccount);
+    return new InMemoryAuthGateway(accounts, { delayMs: 0, registered });
+  }
+
+  it('US1-6 (002): una cuenta registrada en la sesión inicia sesión', async () => {
+    const result = await withRegistered().authenticate({
+      email: ' ANA@example.test ',
+      password: 'Clave-segura-1',
+    });
+    expect(result).toEqual({ kind: 'success', displayName: 'Ana Pérez' });
+  });
+
+  it('US1-6 (002): cuenta registrada con contraseña distinta → invalid-credentials', async () => {
+    const result = await withRegistered().authenticate({
+      email: registeredAccount.email,
+      password: 'clave-segura-1',
+    });
+    expect(result).toEqual({ kind: 'invalid-credentials' });
+  });
+
+  it('US1-6 (002): sin configuración de demostración la cuenta registrada sigue funcionando', async () => {
+    const registered = await withRegistered(null).authenticate({
+      email: registeredAccount.email,
+      password: registeredAccount.password,
+    });
+    expect(registered).toEqual({ kind: 'success', displayName: 'Ana Pérez' });
+    const other = await withRegistered(null).authenticate({
+      email: TEST_ACCOUNT.email,
+      password: TEST_ACCOUNT.password,
+    });
+    expect(other).toEqual({ kind: 'unavailable' });
+  });
+
+  it('las cuentas de demostración siguen funcionando junto a las registradas', async () => {
+    const result = await withRegistered().authenticate({
+      email: TEST_ACCOUNT.email,
+      password: TEST_ACCOUNT.password,
+    });
+    expect(result).toEqual({ kind: 'success', displayName: 'Steven Luna' });
   });
 });

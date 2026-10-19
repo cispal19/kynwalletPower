@@ -1,0 +1,43 @@
+/* Más compacto que el login (16px entre controles) para alojar cuatro campos (research.md R1). */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--neutral-900);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 16px;
+  color: var(--neutral-600);
+}
+
+.social {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--neutral-600);
+}

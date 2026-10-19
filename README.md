@@ -1,15 +1,42 @@
-# KynWallet · Inicio de sesión (demo)
+# KynWallet · Inicio de sesión y registro (demo)
 
-Demostración funcional, solo del lado del cliente, de la pantalla de inicio de sesión de la
-billetera virtual KynWallet. Reproduce el diseño de Figma
-([01 · Login](https://www.figma.com/design/f7uDsv8sh6ZOtK2OitTqtg/Billetera-Virtual---Prototipos?node-id=2-2)),
-valida los campos y simula la autenticación contra cuentas ficticias, sin backend ni base de datos.
+Demostración funcional, solo del lado del cliente, de las pantallas de inicio de sesión y de
+registro de la billetera virtual KynWallet. Reproduce los diseños de Figma
+([01 · Login](https://www.figma.com/design/f7uDsv8sh6ZOtK2OitTqtg/Billetera-Virtual---Prototipos?node-id=2-2)
+y [04 · Registro](https://www.figma.com/design/q3svEn6CvsilMMj61UrFks/?node-id=31-2)), valida
+los campos y simula la autenticación y el registro, sin backend ni base de datos.
 
-Especificación, plan y tareas: [`specs/001-login-billetera/`](specs/001-login-billetera/).
+Especificación, plan y tareas: [`specs/001-login-billetera/`](specs/001-login-billetera/) y
+[`specs/002-registro-usuarios/`](specs/002-registro-usuarios/).
 
 ## Requisitos
 
-- Node.js 20 LTS o superior y npm 10 o superior.
+- Node.js 22.22.2 o superior dentro de la línea 22, o 24.15.0 o superior (lo exige `jsdom`, que
+  usan las pruebas), y npm 10 o superior. Con nvm: `nvm use` (lee `.nvmrc`).
+
+## Rutas
+
+| Dirección   | Pantalla                                |
+| ----------- | --------------------------------------- |
+| `/login`    | Inicio de sesión                        |
+| `/registro` | Registro                                |
+| otra (`/`)  | Se reemplaza por `/login` (redirección) |
+
+"Regístrate" (login) e "Inicia sesión" (registro) navegan entre ambas sin recargar; atrás y
+adelante del navegador funcionan. `npm run dev` y `npm run preview` ya sirven `index.html` para
+cualquier ruta. **Hosting estático**: hay que configurar el servidor para que devuelva
+`index.html` en las rutas desconocidas (p. ej. `/registro`); si no, recargar en ellas da 404.
+
+## Registro simulado
+
+- Tras "Crear cuenta" se espera 1 s y se vuelve a `/login` con el mensaje "Registro completado
+  (demostración)…". La cuenta nueva sirve para iniciar sesión **mientras no recargues ni cierres
+  la pestaña**: vive solo en memoria, también sin `.env.local`.
+- No modifica `VITE_DEMO_USERS` ni guarda nada en el almacenamiento del navegador, la URL o la red.
+- Un correo ya registrado (o de una cuenta de demostración) se rechaza con "Ya existe una cuenta
+  con este correo".
+- Google y Apple muestran el aviso nativo "Próximamente".
+- Los términos y condiciones son un texto ficticio sin valor legal.
 
 ## Configuración
 
@@ -51,13 +78,15 @@ Clean Architecture ligera. Las dependencias apuntan hacia el dominio y ESLint lo
 ```text
 src/
 ├── domain/          # Tipos, reglas de validación y textos. Sin React.
-├── application/     # Caso de uso `authenticate` y puerto `AuthGateway`
-├── infrastructure/  # `InMemoryAuthGateway` (simulación, 1 s) y `loadDemoAccounts`
+├── application/     # Casos de uso `authenticate` y `register`; puertos `AuthGateway` y `RegistrationGateway`
+├── infrastructure/  # `InMemoryAuthGateway`, `SimulatedRegistrationGateway` (simulaciones, 1 s) y `loadDemoAccounts`
 ├── ui/
 │   ├── styles/      # Tokens de Figma (`tokens.css`) y estilos globales
-│   ├── components/  # Button, TextField, PasswordField, Checkbox, SocialButton, Divider, Alert
-│   ├── layout/      # BrandPanel
-│   └── features/login/  # LoginScreen, LoginForm, WelcomeView, reducer y hook
+│   ├── components/  # Button, TextField, PasswordField, Checkbox, SocialButton, Divider, Alert, Modal
+│   ├── layout/      # AuthLayout (dos paneles) y BrandPanel
+│   ├── navigation/  # Rutas, `navigate`, `useCurrentPath` y `Link` (History API, sin router)
+│   ├── features/login/     # LoginForm, WelcomeView, reducer y hook
+│   └── features/register/  # RegisterForm, TermsDialog, reducer y hook
 ├── App.tsx
 └── main.tsx         # Raíz de composición (inyección de dependencias)
 ```
@@ -73,5 +102,6 @@ requisito que verifica (por ejemplo, `US2-1`, `FR-012`) para mantener la trazabi
   en `src/ui/styles/tokens.css`). Detalle en `specs/001-login-billetera/research.md` (R3).
 - Los iconos de Google, Apple y del control de visibilidad son los marcadores de posición del
   diseño de Figma.
-- Fuera de alcance: recuperar contraseña, registro, acceso con Google/Apple, persistencia de
-  "Recordarme" y bloqueo por intentos fallidos. Al activarlos se muestra un aviso.
+- Fuera de alcance: recuperar contraseña, acceso con Google/Apple, persistencia de
+  "Recordarme" y bloqueo por intentos fallidos. Al activarlos se muestra un aviso. El registro
+  es una simulación (ver "Registro simulado").

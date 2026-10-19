@@ -38,3 +38,8 @@
     grid-template-columns: 620px 1fr;
   }
 }
+
+/* El título recibe el foco por programa tras navegar; no es un control (como WelcomeView). */
+.content h1:focus-visible {
+  box-shadow: none;
+}

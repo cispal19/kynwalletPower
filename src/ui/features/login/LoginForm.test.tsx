@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MESSAGES } from '@/domain/messages';
 import { createAuthStub } from '@/test/authStub';
 import { TEST_ACCOUNT } from '@/test/fixtures';
 import { LoginForm } from './LoginForm';
@@ -179,7 +180,7 @@ describe('LoginForm · US3 Validar los campos antes de enviar', () => {
 });
 
 describe('LoginForm · US5 Elementos del diseño fuera de alcance', () => {
-  it.each(['¿Olvidaste tu contraseña?', 'Google', 'Apple', 'Regístrate'])(
+  it.each(['¿Olvidaste tu contraseña?', 'Google', 'Apple'])(
     'US5-1: "%s" muestra el aviso y conserva los datos',
     async (name) => {
       const { user, stub, email, password } = setup();
@@ -218,12 +219,22 @@ describe('LoginForm · US5 Elementos del diseño fuera de alcance', () => {
       screen.getByRole('button', { name: 'Iniciar sesión' }),
       screen.getByRole('button', { name: 'Google' }),
       screen.getByRole('button', { name: 'Apple' }),
-      screen.getByRole('button', { name: 'Regístrate' }),
+      screen.getByRole('link', { name: 'Regístrate' }),
     ];
     for (const element of expected) {
       await user.tab();
       expect(element).toHaveFocus();
     }
+  });
+
+  it('FR-021: "Regístrate" es un enlace a /registro', async () => {
+    history.replaceState(null, '', '/login');
+    const { user } = setup();
+    const link = screen.getByRole('link', { name: 'Regístrate' });
+    expect(link).toHaveAttribute('href', '/registro');
+    await user.click(link);
+    expect(location.pathname).toBe('/registro');
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   it('el aviso desaparece al enviar el formulario', async () => {
@@ -260,5 +271,42 @@ describe('LoginForm · seguridad (FR-012)', () => {
 
     setItem.mockRestore();
     consoleSpies.forEach((spy) => spy.mockRestore());
+  });
+});
+
+describe('LoginForm · aviso de registro completado (002 US1)', () => {
+  it('US1-3: con initialNotice muestra el mensaje antes del título y con el foco', () => {
+    render(
+      <LoginForm
+        authenticate={createAuthStub().authenticate}
+        initialNotice={MESSAGES.SIGNUP_SUCCESS}
+      />,
+    );
+    const notice = screen.getByRole('status');
+    expect(notice).toHaveTextContent(
+      /^Registro completado \(demostración\)\. Ya puedes iniciar sesión con tu nueva cuenta\.$/,
+    );
+    const heading = screen.getByRole('heading', { name: 'Bienvenido de nuevo' });
+    expect(notice.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(notice).toHaveFocus();
+    expect(screen.getByLabelText('Correo electrónico')).toHaveValue('');
+    expect(screen.getByLabelText('Contraseña')).toHaveValue('');
+  });
+
+  it('FR-013: escribir en un campo oculta el mensaje', async () => {
+    const user = userEvent.setup();
+    render(
+      <LoginForm
+        authenticate={createAuthStub().authenticate}
+        initialNotice={MESSAGES.SIGNUP_SUCCESS}
+      />,
+    );
+    await user.type(screen.getByLabelText('Correo electrónico'), 'a');
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+
+  it('sin initialNotice no hay mensaje', () => {
+    setup();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 });

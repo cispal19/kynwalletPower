@@ -51,7 +51,7 @@ Siendo `<correo>` y `<contraseña>` una cuenta definida en `.env.local`:
 | 7 | Escribir "usuario@" y salir del campo | "Ingresa un correo electrónico válido" | US3-2 |
 | 8 | Contraseña "1234567" | "La contraseña debe tener al menos 8 caracteres" | US3-3 |
 | 9 | Activar el icono de visibilidad | Se muestra y se oculta la contraseña | US4 |
-| 10 | Presionar Google, Apple, "¿Olvidaste…?" o "Regístrate" | "Función no disponible en esta demostración" | US5-1 |
+| 10 | Presionar Google, Apple o "¿Olvidaste…?" | "Función no disponible en esta demostración" | US5-1 (sin "Regístrate", que navega a `/registro` por 002 FR-021) |
 | 11 | Borrar `VITE_DEMO_USERS` y reiniciar `npm run dev`; intentar acceder | "Servicio de acceso no disponible. Intenta más tarde." | Caso límite |
 | 12 | Reducir la ventana a 320px | Sin scroll horizontal; logo visible; formulario usable | FR-018 |
 | 13 | Recorrer la pantalla solo con Tab y Enter | Orden según [contracts/ui-login.md](./contracts/ui-login.md#teclado); foco visible | FR-014 |

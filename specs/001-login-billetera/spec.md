@@ -157,6 +157,7 @@ funcional (YAGNI).
 1. **Given** la pantalla de inicio de sesión, **When** el usuario activa "¿Olvidaste tu
    contraseña?", "Google", "Apple" o "Regístrate", **Then** se muestra el aviso "Función no
    disponible en esta demostración" y la pantalla conserva los datos ingresados.
+   > Enmendado por [002-registro-usuarios](../002-registro-usuarios/spec.md) FR-021: "Regístrate" navega a `/registro` en lugar de mostrar el aviso; los otros tres elementos no cambian.
 2. **Given** la casilla "Recordarme", **When** el usuario la marca o desmarca, **Then** la
    casilla cambia de estado visualmente sin almacenar ningún dato.
 
@@ -217,6 +218,7 @@ funcional (YAGNI).
 - **FR-016**: Los elementos "¿Olvidaste tu contraseña?", "Google", "Apple" y "Regístrate" DEBEN
   mostrarse según el diseño y, al activarse, informar "Función no disponible en esta
   demostración".
+  > Enmendado por [002-registro-usuarios](../002-registro-usuarios/spec.md) FR-021: "Regístrate" navega a `/registro` en lugar de mostrar el aviso.
 - **FR-017**: La casilla "Recordarme" DEBE mostrarse y cambiar de estado, sin persistir datos.
 - **FR-018**: La pantalla DEBE adaptarse a anchos desde 320 px hasta escritorio sin
   desplazamiento horizontal; en anchos reducidos el panel de marca puede simplificarse u

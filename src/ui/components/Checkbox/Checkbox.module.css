@@ -1,3 +1,9 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .wrapper {
   display: inline-flex;
   align-items: center;
@@ -36,9 +42,31 @@
   opacity: 1;
 }
 
+.box[aria-invalid='true'] {
+  border-color: var(--danger-600);
+}
+
 .label {
   font-size: 14px;
   font-weight: 500;
   color: var(--neutral-700);
   cursor: pointer;
+}
+
+/* Diseño 04 · Registro: texto a 12px de la casilla; "Recordarme" conserva sus 8px. */
+.withSuffix {
+  gap: 12px;
+}
+
+.text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--neutral-700);
+}
+
+.error {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--danger-600);
 }

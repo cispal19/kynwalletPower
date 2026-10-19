@@ -1,0 +1,5 @@
+.link {
+  composes: link from '../components/Button/Button.module.css';
+  font-weight: 600;
+  text-decoration: none;
+}

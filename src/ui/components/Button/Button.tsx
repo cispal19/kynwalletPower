@@ -1,10 +1,11 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode, Ref } from 'react';
 import styles from './Button.module.css';
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary' | 'secondary' | 'link';
   loading?: boolean;
   loadingLabel?: string;
+  ref?: Ref<HTMLButtonElement>;
   children: ReactNode;
 };
 
@@ -15,6 +16,7 @@ export function Button({
   type = 'button',
   disabled,
   className,
+  ref,
   children,
   ...rest
 }: ButtonProps) {
@@ -22,6 +24,7 @@ export function Button({
   return (
     <button
       {...rest}
+      ref={ref}
       type={type}
       className={classes}
       disabled={disabled || loading}

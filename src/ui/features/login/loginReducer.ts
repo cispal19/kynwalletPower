@@ -13,6 +13,8 @@ export type LoginState = {
   welcomeName: string | null;
   rememberMe: boolean;
   notice: string | null;
+  /** Aviso de registro completado (002 R3); desaparece al escribir. */
+  successNotice: string | null;
 };
 
 export type LoginAction =
@@ -33,7 +35,13 @@ export const initialLoginState: LoginState = {
   welcomeName: null,
   rememberMe: false,
   notice: null,
+  successNotice: null,
 };
+
+/** Estado inicial con el aviso de registro completado, si lo hay. */
+export function createInitialLoginState(successNotice?: string): LoginState {
+  return { ...initialLoginState, successNotice: successNotice ?? null };
+}
 
 /** Errores visibles: solo los de campos ya tocados (FR-005). */
 function visibleErrors(values: LoginState['values'], touched: LoginState['touched']): FieldErrors {
@@ -53,6 +61,7 @@ export function loginReducer(state: LoginState, action: LoginAction): LoginState
         ...state,
         status: state.status === 'authError' ? 'editing' : state.status,
         authError: null,
+        successNotice: null,
         values,
         fieldErrors: visibleErrors(values, state.touched),
       };

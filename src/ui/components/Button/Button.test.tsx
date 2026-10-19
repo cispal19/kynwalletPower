@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expectNoA11yViolations } from '@/test/a11y';
@@ -44,5 +45,11 @@ describe('Button', () => {
   it('FR-015: no tiene violaciones de accesibilidad', async () => {
     const { container } = render(<Button>Ok</Button>);
     await expectNoA11yViolations(container);
+  });
+
+  it('acepta ref sobre el botón (002: devolver el foco al enlace de términos)', () => {
+    const ref = createRef<HTMLButtonElement>();
+    render(<Button ref={ref}>Ok</Button>);
+    expect(ref.current).toBe(screen.getByRole('button', { name: 'Ok' }));
   });
 });
